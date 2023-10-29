@@ -78,7 +78,12 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+      if (message.startsWith("#")){
+        handleCommand(message);
+      }
+      else{
+        sendToServer(message);
+      }
     }
     catch(IOException e)
     {
@@ -88,6 +93,36 @@ public class ChatClient extends AbstractClient
     }
   }
 
+  private void handleCommand(String command){
+    if (command.equals("#quit")){
+      quit();
+    }
+
+    else if (command.equals("#logoff")){
+      try{
+        closeConnection();
+        clientUI.display("You have logged off");
+      }
+      catch(IOException e){
+        clientUI.display("There was an error logging off");
+      }
+    }
+
+    else if (command.startsWith("#sethost")){
+      String[] word = command.split(" ");
+      String host = word[1];
+      setHost(host);
+    }
+    
+    else if (command.equals("#setport")){
+    }
+    else if (command.equals("#login")){
+    }
+    else if (command.equals("#gethost")){
+    }
+    else if (command.equals("#getport")){
+    }
+  }
   @Override
   protected void connectionClosed() {
     clientUI.display("Connection Closed");
