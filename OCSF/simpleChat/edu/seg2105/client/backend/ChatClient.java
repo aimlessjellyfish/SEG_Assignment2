@@ -113,16 +113,42 @@ public class ChatClient extends AbstractClient
       String host = word[1];
       setHost(host);
     }
-    
-    else if (command.equals("#setport")){
+
+    else if (command.startsWith("#setport")){
+      String[] word = command.split(" ");
+      int port = Integer.parseInt(word[1]);
+      setPort(port);
     }
+
     else if (command.equals("#login")){
+      if (isConnected()){
+        clientUI.display("Error: Already connected");
+      }
+      else{
+        try{
+          openConnection();
+        }
+        catch(IOException e){
+          clientUI.display("Failed to connect");
+        }
+      } 
     }
+
     else if (command.equals("#gethost")){
+      String host = getHost();
+      clientUI.display(host);
     }
+
     else if (command.equals("#getport")){
+      int port = getPort();
+      clientUI.display(String.valueOf(port));
+    }
+
+    else{
+      clientUI.display("Not a command");
     }
   }
+
   @Override
   protected void connectionClosed() {
     clientUI.display("Connection Closed");
