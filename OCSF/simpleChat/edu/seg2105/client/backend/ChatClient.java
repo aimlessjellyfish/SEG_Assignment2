@@ -59,14 +59,6 @@ public class ChatClient extends AbstractClient
   {
     clientUI.display(msg.toString());
     
-    /*try{
-      openConnection();
-    } 
-    catch(IOException e){
-      connectionException(e);
-      connectionClosed();
-    }*/ 
-    
   }
 
   /**
@@ -84,9 +76,7 @@ public class ChatClient extends AbstractClient
       else{
         sendToServer(message);
       }
-    }
-    catch(IOException e)
-    {
+    } catch(IOException e){
       clientUI.display
         ("Could not send message to server.  Terminating client.");
       quit();
@@ -101,14 +91,14 @@ public class ChatClient extends AbstractClient
   private void handleCommand(String command){
     if (command.equals("#quit")){
       quit();
+      clientUI.display("You have quit");
     }
 
     else if (command.equals("#logoff")){
       try{
         closeConnection();
         clientUI.display("You have logged off");
-      }
-      catch(IOException e){
+      } catch(IOException e){
         clientUI.display("There was an error logging off");
       }
     }
@@ -117,12 +107,14 @@ public class ChatClient extends AbstractClient
       String[] word = command.split(" ");
       String host = word[1];
       setHost(host);
+      clientUI.display("Host is set to " + host);
     }
 
     else if (command.startsWith("#setport")){
       String[] word = command.split(" ");
       int port = Integer.parseInt(word[1]);
       setPort(port);
+      clientUI.display("Port is set to " + port);
     }
 
     else if (command.equals("#login")){
@@ -132,8 +124,7 @@ public class ChatClient extends AbstractClient
       else{
         try{
           openConnection();
-        }
-        catch(IOException e){
+        } catch(IOException e){
           clientUI.display("Failed to connect");
         }
       } 
@@ -141,12 +132,12 @@ public class ChatClient extends AbstractClient
 
     else if (command.equals("#gethost")){
       String host = getHost();
-      clientUI.display(host);
+      clientUI.display("Host is " + host);
     }
 
     else if (command.equals("#getport")){
       int port = getPort();
-      clientUI.display(String.valueOf(port));
+      clientUI.display("Port is " + port);
     }
 
     else{
@@ -173,8 +164,7 @@ public class ChatClient extends AbstractClient
     try
     {
       closeConnection();
-    }
-    catch(IOException e) {}
+    } catch(IOException e) {}
     System.exit(0);
   }
 }

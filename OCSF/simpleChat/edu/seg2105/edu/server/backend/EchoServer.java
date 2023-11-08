@@ -4,6 +4,8 @@ package edu.seg2105.edu.server.backend;
 // license found at www.lloseng.com 
 
 
+import java.io.IOException;
+
 import ocsf.server.*;
 
 /**
@@ -50,6 +52,83 @@ public class EchoServer extends AbstractServer
   {
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
+    System.out.println(getPort());
+  }
+
+  /**
+   * This method handles any messages received from the client.
+   * 
+   * @param message The message received from the server
+   */
+  public void handleMessageFromServerConsole(String message){
+    try{
+      if (message.startsWith("#")){
+        handleCommand(message);
+      }
+      else{
+        sendToAllClients("SERVER MSG> " + message);
+      }
+    } catch(Exception e){
+      System.out.println("Could not send message to client");
+    }
+  }
+
+  /**
+   * This method handles command prompts starting with #
+   * 
+   * @param command
+   */
+  public void handleCommand(String command){
+    if (command.equals("#quit")){
+      try {
+        close();
+        System.out.println("Server has shut down");
+      } catch (IOException e) {
+        System.exit(0);
+      }
+      System.exit(0);
+    }
+
+    else if (command.equals("#stop")){
+      stopListening();
+      System.out.println("Server has stopped accepting new clients");
+    }
+
+    else if (command.equals("#close")){
+      try {
+        close();
+      } catch (IOException e){
+        System.out.println("Error while trying to close connections");
+      }
+    }
+
+    else if (command.startsWith("#setport")){
+      if (!isListening() && getNumberOfClients() == 0){
+        String[] word = command.split(" ");
+        int port = Integer.parseInt(word[1]);
+        setPort(port);
+        System.out.println("Port is set to " + port);
+      }
+      else{
+        System.out.println("Error: Cannot set port when server and clients are connected");
+      }
+    }
+
+    else if (command.equals("#start")){
+      try{
+        listen();
+      } catch(IOException e){
+        System.out.println("Error: Server is already open");
+      }
+    }
+
+    else if (command.equals("#getport")){
+     System.out.println("Port is " + getPort());
+    }
+
+    else{
+      System.out.println("Not a command");
+    }
   }
     
   /**
