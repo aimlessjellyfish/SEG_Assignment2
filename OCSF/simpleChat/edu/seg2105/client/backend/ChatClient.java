@@ -93,6 +93,11 @@ public class ChatClient extends AbstractClient
     }
   }
 
+  /**
+   * This method handles command prompts starting with #
+   * @param command
+   */
+
   private void handleCommand(String command){
     if (command.equals("#quit")){
       quit();
