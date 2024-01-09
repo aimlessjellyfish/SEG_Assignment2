@@ -21,6 +21,9 @@ public class EchoServer extends AbstractServer
 {
   //Class variables *************************************************
   
+  String loginKey = "";
+  String loginID;
+  
   /**
    * The default port to listen on.
    */
@@ -50,9 +53,24 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
-    System.out.println(getPort());
+    String msgString = (String) msg;
+    if(msgString.startsWith("#login")){
+      String[] loginWords = msgString.split(" ");
+      loginID = loginWords[1];
+
+      if (client.getInfo(loginID) == null){ 
+        System.out.println("Message received: " + msg + " from " + loginKey);
+        client.setInfo(loginID, loginID); //key and id are same so key is unique
+        System.out.println(client.getInfo(loginID) + " has logged on.");
+      } 
+      else{
+        System.out.println(client.getInfo(loginID) + " has logged on.");
+      }
+    }
+    else{
+      System.out.println("Message received: " + msg + " from " + client.getInfo(loginID));
+      this.sendToAllClients(client.getInfo(loginID) + "> " + msg);
+    }
   }
 
   /**
@@ -84,7 +102,7 @@ public class EchoServer extends AbstractServer
         close();
         System.out.println("Server has shut down");
       } catch (IOException e) {
-        System.exit(0);
+        System.exit(1);
       }
       System.exit(0);
     }
